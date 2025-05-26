@@ -16,12 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Blocks, ProjectorScreen, LibraryBig, FileText, BotMessageSquare, Settings, Info } from "lucide-react";
+import { LayoutGrid, Blocks, Projector, LibraryBig, FileText, BotMessageSquare, Settings, Info } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Interactive Config", icon: LayoutGrid },
   { href: "/app-builder", label: "App Builder", icon: Blocks },
-  { href: "/visual-architecture", label: "Visual Architecture", icon: ProjectorScreen },
+  { href: "/visual-architecture", label: "Visual Architecture", icon: Projector },
   { href: "/architecture-patterns", label: "Architecture Patterns", icon: LibraryBig },
   { href: "/build-docs", label: "Build Documentation", icon: FileText },
 ];
@@ -81,3 +81,4 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
