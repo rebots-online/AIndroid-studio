@@ -29,6 +29,7 @@ export function AppHeader() {
             size="icon"
             onClick={() => setIsBuildPipelineModalOpen(true)}
             aria-label="Open Build Pipeline Dashboard"
+            disabled
           >
             <Workflow className="h-5 w-5" />
           </Button>

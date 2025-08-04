@@ -16,12 +16,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, Blocks, Projector, LibraryBig, FileText, BotMessageSquare, Settings, Info } from "lucide-react";
+import { LayoutGrid, LibraryBig, FileText, BotMessageSquare, Settings, Info } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Interactive Config", icon: LayoutGrid },
-  { href: "/app-builder", label: "App Builder", icon: Blocks },
-  { href: "/visual-architecture", label: "Visual Architecture", icon: Projector },
   { href: "/architecture-patterns", label: "Architecture Patterns", icon: LibraryBig },
   { href: "/build-docs", label: "Build Documentation", icon: FileText },
 ];
@@ -65,13 +63,13 @@ export function AppSidebar() {
       <SidebarFooter className="p-2 border-t border-sidebar-border">
          <SidebarMenu>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip={{ children: "Settings", side: "right", align:"center" }}>
+                <SidebarMenuButton disabled tooltip={{ children: "Settings", side: "right", align:"center" }}>
                     <Settings className="h-5 w-5" />
                     <span className="group-data-[collapsible=icon]:hidden">Settings</span>
                 </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-                <SidebarMenuButton tooltip={{ children: "About", side: "right", align:"center" }}>
+                <SidebarMenuButton disabled tooltip={{ children: "About", side: "right", align:"center" }}>
                     <Info className="h-5 w-5" />
                     <span className="group-data-[collapsible=icon]:hidden">About</span>
                 </SidebarMenuButton>
@@ -81,4 +79,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-
