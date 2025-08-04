@@ -7,12 +7,10 @@ import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Workflow, BotMessageSquare } from "lucide-react";
-import { BuildPipelineModal } from "@/components/build-pipeline-modal";
 
 export function AppHeader() {
-  const { isMobile, openMobile } = useSidebar();
-  const [isBuildPipelineModalOpen, setIsBuildPipelineModalOpen] = React.useState(false);
-
+  const { isMobile } = useSidebar();
+  
   return (
     <>
       <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background/80 px-4 shadow-sm backdrop-blur-md md:px-6">
@@ -27,7 +25,6 @@ export function AppHeader() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setIsBuildPipelineModalOpen(true)}
             aria-label="Open Build Pipeline Dashboard"
             disabled
           >
@@ -36,10 +33,6 @@ export function AppHeader() {
           <ThemeSwitcher />
         </div>
       </header>
-      <BuildPipelineModal 
-        isOpen={isBuildPipelineModalOpen} 
-        onClose={() => setIsBuildPipelineModalOpen(false)} 
-      />
     </>
   );
 }

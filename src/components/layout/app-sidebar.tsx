@@ -16,12 +16,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { LayoutGrid, LibraryBig, FileText, BotMessageSquare, Settings, Info } from "lucide-react";
+import { LayoutGrid, LibraryBig, FileText, BotMessageSquare, Settings, Info, Milestone } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Interactive Config", icon: LayoutGrid },
   { href: "/architecture-patterns", label: "Architecture Patterns", icon: LibraryBig },
   { href: "/build-docs", label: "Build Documentation", icon: FileText },
+  { href: "/implementation-plan", label: "Implementation Plan", icon: Milestone },
 ];
 
 export function AppSidebar() {
