@@ -11,16 +11,6 @@ import { Loader2, FileCode, Milestone, TestTube2, Network, Database, DollarSign,
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
 
 const initialFeatureDescription = `Implement the 'Reactflow App Builder' as described in the architecture document.
 
@@ -119,7 +109,7 @@ export function ImplementationPlanDisplay() {
       setCost(result);
        toast({
         title: "Cost Estimation Complete!",
-        description: "The cost estimation is ready to be viewed.",
+        description: "The cost estimation is ready.",
         variant: "default",
       });
     } catch (error) {
@@ -239,55 +229,13 @@ export function ImplementationPlanDisplay() {
                 )}
               </Button>
               {cost && (
-                <Dialog>
                    <Alert>
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Cost Estimation Ready</AlertTitle>
                       <AlertDescription>
                         Estimated Price to Implement: <span className="font-semibold">${cost.resalePriceUSD} USD</span>
-                         <DialogTrigger asChild>
-                           <Button variant="link" className="p-1 h-auto">View Details</Button>
-                         </DialogTrigger>
                       </AlertDescription>
                    </Alert>
-                  <DialogContent className="max-w-4xl">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2"><DollarSign className="h-6 w-6"/>Cost Estimation Details</DialogTitle>
-                      <DialogDescription>
-                        This is an estimate for generating the code based on the plan above.
-                        Pricing is based on Gemini 1.5 Flash token costs and includes a safety margin.
-                      </DialogDescription>
-                    </DialogHeader>
-                     <ScrollArea className="max-h-[60vh]">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="w-[40%]">Task</TableHead>
-                              <TableHead>Input Tokens</TableHead>
-                              <TableHead>Output Tokens</TableHead>
-                              <TableHead>Reasoning</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {cost.costBreakdown.map((item, index) => (
-                              <TableRow key={index}>
-                                <TableCell className="font-medium">{item.taskDescription}</TableCell>
-                                <TableCell>{item.estimatedInputTokens.toLocaleString()}</TableCell>
-                                <TableCell>{item.estimatedOutputTokens.toLocaleString()}</TableCell>
-                                <TableCell className="text-xs text-muted-foreground">{item.reasoning}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                           <TableCaption>
-                            Total Input: {cost.totalEstimatedInputTokens.toLocaleString()} tokens, 
-                            Total Output: {cost.totalEstimatedOutputTokens.toLocaleString()} tokens.
-                            <br/>
-                            Base Cost: ${cost.baseEstimatedCostUSD} + Safety Margin: ${cost.safetyMarginUSD} = Final Price: <span className="font-bold">${cost.resalePriceUSD} USD</span>.
-                          </TableCaption>
-                        </Table>
-                     </ScrollArea>
-                  </DialogContent>
-                </Dialog>
               )}
           </CardFooter>
         </Card>
