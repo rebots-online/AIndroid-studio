@@ -2,14 +2,25 @@
 
 import { useState } from "react";
 import { generateImplementationPlan, GenerateImplementationPlanOutput } from "@/ai/flows/generate-implementation-plan";
+import { estimateImplementationCost, EstimateImplementationCostOutput } from "@/ai/flows/estimate-implementation-cost";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Loader2, FileCode, Milestone, TestTube2, Network, Database } from "lucide-react";
+import { Loader2, FileCode, Milestone, TestTube2, Network, Database, DollarSign, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 const initialFeatureDescription = `Implement the 'Reactflow App Builder' as described in the architecture document.
 
@@ -47,7 +58,9 @@ export function ImplementationPlanDisplay() {
   const [featureDescription, setFeatureDescription] = useState(initialFeatureDescription);
   const [currentArchitecture, setCurrentArchitecture] = useState(initialArchitecture);
   const [plan, setPlan] = useState<GenerateImplementationPlanOutput | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [cost, setCost] = useState<EstimateImplementationCostOutput | null>(null);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  const [isEstimatingCost, setIsEstimatingCost] = useState(false);
   const { toast } = useToast();
 
   const handleGeneratePlan = async () => {
@@ -60,8 +73,9 @@ export function ImplementationPlanDisplay() {
       return;
     }
     
-    setIsLoading(true);
+    setIsGeneratingPlan(true);
     setPlan(null);
+    setCost(null);
     toast({
       title: "Generating Plan...",
       description: "Crafting a detailed implementation plan. This might take a moment.",
@@ -86,9 +100,41 @@ export function ImplementationPlanDisplay() {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setIsGeneratingPlan(false);
     }
   };
+
+  const handleEstimateCost = async () => {
+    if (!plan) return;
+
+    setIsEstimatingCost(true);
+    setCost(null);
+     toast({
+      title: "Estimating Cost...",
+      description: "Analyzing the plan to estimate generation costs. Please wait.",
+    });
+
+    try {
+      const result = await estimateImplementationCost(plan);
+      setCost(result);
+       toast({
+        title: "Cost Estimation Complete!",
+        description: "The cost estimation is ready to be viewed.",
+        variant: "default",
+      });
+    } catch (error) {
+       console.error("Error estimating cost:", error);
+      toast({
+        title: "Estimation Failed",
+        description: `An error occurred while estimating cost: ${error instanceof Error ? error.message : String(error)}`,
+        variant: "destructive",
+      });
+    } finally {
+      setIsEstimatingCost(false);
+    }
+  }
+
+  const isLoading = isGeneratingPlan || isEstimatingCost;
 
   return (
     <div className="space-y-8">
@@ -126,7 +172,7 @@ export function ImplementationPlanDisplay() {
         </CardContent>
         <CardFooter>
           <Button onClick={handleGeneratePlan} disabled={isLoading}>
-            {isLoading ? (
+            {isGeneratingPlan ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Generating Plan...
@@ -178,6 +224,71 @@ export function ImplementationPlanDisplay() {
                 <p className="text-muted-foreground whitespace-pre-line">{plan.testingStrategy}</p>
             </div>
           </CardContent>
+          <CardFooter className="flex-col items-start gap-4">
+              <Button onClick={handleEstimateCost} disabled={isLoading}>
+                {isEstimatingCost ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Estimating Cost...
+                  </>
+                ) : (
+                  <>
+                    <DollarSign className="mr-2 h-4 w-4" />
+                    Calculate Estimated Cost
+                  </>
+                )}
+              </Button>
+              {cost && (
+                <Dialog>
+                   <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertTitle>Cost Estimation Ready</AlertTitle>
+                      <AlertDescription>
+                        Total Estimated Cost to Implement: <span className="font-semibold">${cost.totalEstimatedCostUSD} USD</span>
+                         <DialogTrigger asChild>
+                           <Button variant="link" className="p-1 h-auto">View Details</Button>
+                         </DialogTrigger>
+                      </AlertDescription>
+                   </Alert>
+                  <DialogContent className="max-w-4xl">
+                    <DialogHeader>
+                      <DialogTitle className="flex items-center gap-2"><DollarSign className="h-6 w-6"/>Cost Estimation Details</DialogTitle>
+                      <DialogDescription>
+                        This is an estimate for generating the code based on the plan above.
+                        Pricing is based on Gemini 1.5 Flash token costs.
+                      </DialogDescription>
+                    </DialogHeader>
+                     <ScrollArea className="max-h-[60vh]">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="w-[40%]">Task</TableHead>
+                              <TableHead>Input Tokens</TableHead>
+                              <TableHead>Output Tokens</TableHead>
+                              <TableHead>Reasoning</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {cost.costBreakdown.map((item, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="font-medium">{item.taskDescription}</TableCell>
+                                <TableCell>{item.estimatedInputTokens.toLocaleString()}</TableCell>
+                                <TableCell>{item.estimatedOutputTokens.toLocaleString()}</TableCell>
+                                <TableCell className="text-xs text-muted-foreground">{item.reasoning}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                           <TableCaption>
+                            Total Input: {cost.totalEstimatedInputTokens.toLocaleString()} tokens, 
+                            Total Output: {cost.totalEstimatedOutputTokens.toLocaleString()} tokens. 
+                            Total Estimated Cost: ${cost.totalEstimatedCostUSD} USD.
+                          </TableCaption>
+                        </Table>
+                     </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+              )}
+          </CardFooter>
         </Card>
       )}
     </div>
