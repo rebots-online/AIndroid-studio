@@ -14,6 +14,7 @@ import {z} from 'zod';
 // Based on Gemini 1.5 Flash pricing as of mid-2024
 const INPUT_TOKEN_COST_PER_MILLION = 0.35;
 const OUTPUT_TOKEN_COST_PER_MILLION = 1.05;
+const SAFETY_MARGIN_PERCENTAGE = 0.20; // 20% safety margin
 
 const FileModificationSchema = z.object({
   filePath: z.string(),
@@ -44,7 +45,9 @@ const EstimateImplementationCostOutputSchema = z.object({
   costBreakdown: z.array(CostEstimationSchema).describe("An array of cost estimations for each major task."),
   totalEstimatedInputTokens: z.number().describe("The sum of all estimated input tokens."),
   totalEstimatedOutputTokens: z.number().describe("The sum of all estimated output tokens."),
-  totalEstimatedCostUSD: z.string().describe("The total estimated cost in USD, formatted to 4 decimal places."),
+  baseEstimatedCostUSD: z.string().describe("The base estimated cost in USD, formatted to 4 decimal places."),
+  safetyMarginUSD: z.string().describe("The calculated safety margin in USD, formatted to 4 decimal places."),
+  resalePriceUSD: z.string().describe("The final resale price (base cost + safety margin) in USD, formatted to 4 decimal places."),
 });
 export type EstimateImplementationCostOutput = z.infer<
   typeof EstimateImplementationCostOutputSchema
@@ -58,13 +61,17 @@ export async function estimateImplementationCost(
   const totalInputTokens = result.costBreakdown.reduce((acc, item) => acc + item.estimatedInputTokens, 0);
   const totalOutputTokens = result.costBreakdown.reduce((acc, item) => acc + item.estimatedOutputTokens, 0);
 
-  const totalCost = (totalInputTokens / 1_000_000 * INPUT_TOKEN_COST_PER_MILLION) + (totalOutputTokens / 1_000_000 * OUTPUT_TOKEN_COST_PER_MILLION);
+  const baseCost = (totalInputTokens / 1_000_000 * INPUT_TOKEN_COST_PER_MILLION) + (totalOutputTokens / 1_000_000 * OUTPUT_TOKEN_COST_PER_MILLION);
+  const safetyMargin = baseCost * SAFETY_MARGIN_PERCENTAGE;
+  const resalePrice = baseCost + safetyMargin;
 
   return {
       ...result,
       totalEstimatedInputTokens: totalInputTokens,
       totalEstimatedOutputTokens: totalOutputTokens,
-      totalEstimatedCostUSD: totalCost.toFixed(4)
+      baseEstimatedCostUSD: baseCost.toFixed(4),
+      safetyMarginUSD: safetyMargin.toFixed(4),
+      resalePriceUSD: resalePrice.toFixed(4),
   };
 }
 

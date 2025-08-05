@@ -244,7 +244,7 @@ export function ImplementationPlanDisplay() {
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>Cost Estimation Ready</AlertTitle>
                       <AlertDescription>
-                        Total Estimated Cost to Implement: <span className="font-semibold">${cost.totalEstimatedCostUSD} USD</span>
+                        Estimated Price to Implement: <span className="font-semibold">${cost.resalePriceUSD} USD</span>
                          <DialogTrigger asChild>
                            <Button variant="link" className="p-1 h-auto">View Details</Button>
                          </DialogTrigger>
@@ -255,7 +255,7 @@ export function ImplementationPlanDisplay() {
                       <DialogTitle className="flex items-center gap-2"><DollarSign className="h-6 w-6"/>Cost Estimation Details</DialogTitle>
                       <DialogDescription>
                         This is an estimate for generating the code based on the plan above.
-                        Pricing is based on Gemini 1.5 Flash token costs.
+                        Pricing is based on Gemini 1.5 Flash token costs and includes a safety margin.
                       </DialogDescription>
                     </DialogHeader>
                      <ScrollArea className="max-h-[60vh]">
@@ -280,8 +280,9 @@ export function ImplementationPlanDisplay() {
                           </TableBody>
                            <TableCaption>
                             Total Input: {cost.totalEstimatedInputTokens.toLocaleString()} tokens, 
-                            Total Output: {cost.totalEstimatedOutputTokens.toLocaleString()} tokens. 
-                            Total Estimated Cost: ${cost.totalEstimatedCostUSD} USD.
+                            Total Output: {cost.totalEstimatedOutputTokens.toLocaleString()} tokens.
+                            <br/>
+                            Base Cost: ${cost.baseEstimatedCostUSD} + Safety Margin: ${cost.safetyMarginUSD} = Final Price: <span className="font-bold">${cost.resalePriceUSD} USD</span>.
                           </TableCaption>
                         </Table>
                      </ScrollArea>
