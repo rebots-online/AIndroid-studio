@@ -11,9 +11,41 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 
+const initialFeatureDescription = `Implement the 'Reactflow App Builder' as described in the architecture document.
+
+This feature will allow users to visually construct application logic using a drag-and-drop interface.
+
+Key requirements:
+- Create a new page at '/app-builder'.
+- Use the 'reactflow' library for the canvas.
+- Implement custom nodes for UI Screens, Data Models, and API Calls.
+- Include a toolbar for adding nodes and managing the graph.
+- Create an inspector panel to edit properties of selected nodes/edges.
+- Develop a new Genkit flow named 'translateReactflowToKotlin' that takes the Reactflow JSON state as input and generates corresponding Kotlin application code.`;
+
+const initialArchitecture = `The application is built on Next.js (App Router), TypeScript, ShadCN UI, Tailwind CSS, and Genkit.
+
+Current Structure:
+- src/app/layout.tsx (Root Layout)
+  - src/components/layout/app-sidebar.tsx (Navigation)
+  - src/components/layout/app-header.tsx (Header)
+  - {children} (Page Content)
+
+Existing Pages:
+- / (Interactive Configuration)
+- /architecture-patterns
+- /build-docs
+- /implementation-plan
+
+Existing Genkit Flows:
+- generateTermuxKotlinFramework
+- suggestArchitecturePatterns
+- generateBuildDocumentation
+- generateImplementationPlan`;
+
 export function ImplementationPlanDisplay() {
-  const [featureDescription, setFeatureDescription] = useState("");
-  const [currentArchitecture, setCurrentArchitecture] = useState("");
+  const [featureDescription, setFeatureDescription] = useState(initialFeatureDescription);
+  const [currentArchitecture, setCurrentArchitecture] = useState(initialArchitecture);
   const [plan, setPlan] = useState<GenerateImplementationPlanOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
