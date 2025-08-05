@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -7,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Loader2, FileCode, Milestone, TestTube2, Network, Database, DollarSign, AlertCircle } from "lucide-react";
+import { Loader2, FileCode, Milestone, TestTube2, Network, Database, DollarSign, AlertCircle, Banknote, Hash } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
@@ -51,6 +52,8 @@ export function ImplementationPlanDisplay() {
   const [cost, setCost] = useState<EstimateImplementationCostOutput | null>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [isEstimatingCost, setIsEstimatingCost] = useState(false);
+  const [runningTotal, setRunningTotal] = useState(0);
+  const [plansEstimated, setPlansEstimated] = useState(0);
   const { toast } = useToast();
 
   const handleGeneratePlan = async () => {
@@ -107,6 +110,8 @@ export function ImplementationPlanDisplay() {
     try {
       const result = await estimateImplementationCost(plan);
       setCost(result);
+      setRunningTotal((prevTotal) => prevTotal + parseFloat(result.resalePriceUSD));
+      setPlansEstimated((prevCount) => prevCount + 1);
        toast({
         title: "Cost Estimation Complete!",
         description: "The cost estimation is ready.",
@@ -174,6 +179,31 @@ export function ImplementationPlanDisplay() {
         </CardFooter>
       </Card>
 
+      {plansEstimated > 0 && (
+          <Card className="shadow-lg animate-in fade-in-50">
+              <CardHeader>
+                  <CardTitle>Session Cost Summary</CardTitle>
+                  <CardDescription>A running total of estimated costs for this session.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-4 p-4 rounded-lg bg-muted">
+                    <Banknote className="h-8 w-8 text-primary"/>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Running Total</p>
+                        <p className="text-2xl font-bold">${runningTotal.toFixed(4)}</p>
+                    </div>
+                  </div>
+                   <div className="flex items-center gap-4 p-4 rounded-lg bg-muted">
+                    <Hash className="h-8 w-8 text-primary"/>
+                     <div>
+                        <p className="text-sm text-muted-foreground">Plans Estimated</p>
+                        <p className="text-2xl font-bold">{plansEstimated}</p>
+                    </div>
+                  </div>
+              </CardContent>
+          </Card>
+      )}
+
       {plan && (
         <Card className="shadow-lg animate-in fade-in-50">
           <CardHeader>
@@ -231,7 +261,7 @@ export function ImplementationPlanDisplay() {
               {cost && (
                    <Alert>
                       <AlertCircle className="h-4 w-4" />
-                      <AlertTitle>Cost Estimation Ready</AlertTitle>
+                      <AlertTitle>Cost Estimation for this Plan</AlertTitle>
                       <AlertDescription>
                         Estimated Price to Implement: <span className="font-semibold">${cost.resalePriceUSD} USD</span>
                       </AlertDescription>
