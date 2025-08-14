@@ -1,0 +1,21 @@
+%% Project UUID: c365a748-e2de-81ea-a6e3-4d7402a882d5
+%% Mermaid diagram representing current code structure
+
+graph TD
+    root_layout["RootLayout\n(src/app/layout.tsx)"] --> sidebar_provider["SidebarProvider\n(src/components/ui/sidebar.tsx)"]
+    sidebar_provider --> app_sidebar["AppSidebar\n(src/components/layout/app-sidebar.tsx)"]
+    sidebar_provider --> app_header["AppHeader\n(src/components/layout/app-header.tsx)"]
+    root_layout --> page_entry["Interactive Configuration Page\n(src/app/page.tsx)"]
+    page_entry --> interactive_config_client["InteractiveConfigClient\n(src/components/interactive-configuration/interactive-config-client.tsx)"]
+    interactive_config_client --> traditional_form["TraditionalForm\n(src/components/interactive-configuration/traditional-form.tsx)"]
+    interactive_config_client --> wizard_form["WizardForm\n(src/components/interactive-configuration/wizard-form.tsx)"]
+    interactive_config_client --> conversational_ui["ConversationalUi\n(src/components/interactive-configuration/conversational-ui.tsx)"]
+    interactive_config_client --> genkit_flows["Genkit Flows\n(src/ai/flows/*)"]
+    genkit_flows --> gtkf["generateTermuxKotlinFramework"]
+    genkit_flows --> sap["suggestArchitecturePatterns"]
+    genkit_flows --> gbd["generateBuildDocumentation"]
+    genkit_flows --> gip["generateImplementationPlan"]
+    genkit_flows --> eic["estimateImplementationCost"]
+    architecture_patterns_page["Architecture Patterns Page\n(src/app/architecture-patterns/page.tsx)"] --> architecture_patterns_display["ArchitecturePatternsDisplay\n(src/components/architecture-patterns-display.tsx)"]
+    build_docs_page["Build Docs Page\n(src/app/build-docs/page.tsx)"] --> build_docs_display["BuildDocsDisplay\n(src/components/build-docs-display.tsx)"]
+    implementation_plan_page["Implementation Plan Page\n(src/app/implementation-plan/page.tsx)"] --> implementation_plan_display["ImplementationPlanDisplay\n(src/components/implementation-plan-display.tsx)"]
